@@ -1,4 +1,4 @@
-(ns ardoq.azure.test-data)
+(ns ardoq.azure.descriptor-test-data)
 
 (def swagger-unresolved
 {

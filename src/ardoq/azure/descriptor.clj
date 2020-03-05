@@ -34,12 +34,13 @@
   ;; We're willfully ignoring responses for now
   (merge
     acc
-    (reduce-kv (fn [inner-acc _ data]
+    (reduce-kv (fn [inner-acc verb data]
                  (let [{:keys [operationId description parameters]} data]
-                   (assoc-in inner-acc [(keyword operationId)] ;; Assuming all names are valid keywords
+                   (assoc inner-acc (keyword operationId) ;; Assuming all names are valid keywords
                              {:path path
                               :description description
                               :parameters parameters ;; XXX: Should params have name keyword?
+                              :verb verb
                               })))
                {} verbs)))
 
@@ -63,6 +64,4 @@
      :parameters parameters
      :definitions definitions
      })
-
-
-  )
+)

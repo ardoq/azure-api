@@ -2,7 +2,8 @@
   (:require
     [clojure.test :refer :all]
     [ardoq.azure.descriptor :as desc]
-    [ardoq.azure.test-data :as test-data]))
+    [ardoq.azure.descriptor-test-data :as test-data]
+    ))
 
 (comment "Outdated"
          (deftest resolve-ref

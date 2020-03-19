@@ -83,3 +83,155 @@ Example of a referenced parameter:
 }
 ```
 
+
+
+# Body
+
+Most of the basic framework is now functional (in a PoC way). Body parameters are still not handled. They seem difficult.
+
+- Bodies almost always contain references to definitions
+- Definitions usually contain nested references (often multiple levels)
+- Body can contain nested objects
+
+Not immediately obvious how to handle this wrt how the user creates his request map.
+Currently we want the user to not have to specify parameter type (path, query, etc).
+This works fine for path and query params since they have a flat structure, but things are less obvious for bodies with nested objects.
+
+Anatomy of a body parameter:
+
+- in: Always set to body
+- name and description: whatever
+- schema: map containing the interesting stuff
+    - type: usually object (json). Can be a primitive (e.g. string) if the body is just a primitive. If *not* object, the properties fields does not exist
+    - required: vec of required fields if object, bool if primitive
+    - properties: A map of the object parameters themselves
+
+
+For properties, the key is the name of the field. This name can be referenced in the "required" field.
+The value is a type definition. It could either be a primitive, like `"type": "string"`, or an object definition, in which case the structure is the same as for schema.
+
+Let's take a look at an example. We have a json body with the following structure:
+```json
+{
+  "id": "10",
+  "user": {"firstName": "John",
+         "lastName": "Doe"
+         }
+}
+
+
+```
+The parameter entry for body could look like this:
+
+```json
+{
+"in": "body",
+"name": "userInfo",
+"description": "Info about the user",
+"schema": {"type": "object",
+        "required": ["user", "id"],
+        "properties": {"id": {"type": "string"},
+                      "user": {"type": "object",
+                               "required": ["firstName", "lastName"],
+                               "properties": {"firstName": {"type": "string"},
+                                              "lastName": {"type": "string"}}
+                      }}
+        }
+}
+```
+
+We might begin by assuming that the user passes in a map identical to the json object, without specifying that we're sending in body parameters. 
+
+Complications: Swagger supports several additional fields with varying behavior. All specified here: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md
+E.g. In PeeringManagementClient, we define a schema by a reference to a definition. That definition contains an "allOf", which in turn contains a reference to another definition.
+We may assume that there are several cases like this, each of which has to be solved.
+
+From what I gather this is not something that gcp-api addresses at all, possibly due to the gcp swaggerfiles being simpler.
+
+Another thing to consider is that the structure could contain references, like this:
+
+```json
+{
+"in": "body",
+"name": "userInfo",
+"description": "Info about the user",
+"schema": {"reference/definitions": "userInfo"}
+}
+
+"definitions" : {"userInfo":
+                {"type": "object",
+                 "required": ["user", "id"],
+                 "properties": {"id": {"type": "string"},
+                                "user": {"reference/definitions": "user"}}
+                },
+              "user": {"type": "object",
+                       "required": ["firstName", "lastName"],
+                       "properties": {"firstName": {"type": "string"},
+                                       "lastName": {"type": "string"}}
+                      }
+}
+```
+
+*Note: this is the descriptor.edn format.*
+
+The current reference solution is to resolve references upon request construction, not while creating the descriptor files.
+
+This is done by mapping a resolving function over the parameter vector in one pass.
+This generally works for path and query parameters, because the references are at top-level, and nested references are rare.
+
+For body parameters, this is completely infeasible. References are usually (not necessarily) placed at the schema field, and references are often nested.
+
+The initially attempted solution was use postwalk to resolve all references at descriptor-generation time. This could cause files to balloon 10-100x, so it's not feasible.
+The optimal solution would be to only resolve the parameters that are used. Currently, we only resolve parameters for the operation in use. Extending this solution to resolve recursively is probably the best solution.
+
+When structure-parameters encounters a :body param, it dispatches to structure-body with the parameter and req-value.
+
+At this point, body might look like this:
+
+```clojure
+{:description "The properties needed to create or update a peering service.",
+:in "body",
+:name "peeringService",
+:required true,
+:schema {
+  :description "Peering Service",
+  :properties {
+    :location {:description "The location of the resource.",
+               :type "string"},
+    :userInfo {:description "Info about user.",
+                :type "object"
+                :properties {
+                  :id {:description "user id",
+                       :type "string"
+                       :required true}}
+               }
+    :required ["location" "userInfo"],
+    :type "object"},
+}}
+```
+
+In reality it's a bit more complex, but let's start with this.
+
+Anyways, this is what we pass in to structure-body, along with a req map which could contain something like `:peeringService {:location "Right here"}`.
+
+Properties is the most interesting thing. Since properties can be nested it is passed into its own method, `structure-properties`.
+
+Properties has a type field, which is always set to "object" (only objects can have properties).
+
+Properties contains a kv-pair for each object member. It also contains certain optional/required kv-pairs like :required and :type.
+
+There's no clear way to distinguish between which keys are object members and which are swagger metadata. Presumably swagger distinguishes them based on a list of reserved keywords.
+
+We'll have to keep a set of reserved keywords that we either ignore or handle on a case basis.
+
+In structure-properties we might do a reduce-kv over the non-reserved kv-pairs.
+
+Each key is 
+
+How exactly are we going to incorporate the request values into this?
+
+The reason we're doing all this stuff is to figure out what parameters are what type (plus for documentation at a later stage).
+
+The easiest thing to do would be to only check the top-level object/primitive, then naively return anything inside.
+
+It would be a lot better if we checked the body members as well. In order to do this, we have to traverse both the request map and the body param at the same time.

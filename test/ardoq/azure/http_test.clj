@@ -22,11 +22,14 @@
       (is (= structured-map
              (http/structure-parameters test-data/path-and-query req-map))))))
 
-(deftest resolve-parameters-refs-test
-  (testing "parameter-type refs are resolved into op-params"
+(deftest resolve-refs-test
+  (testing "Parameter refs are resolved into op-params"
     ;; Convert to set first because vec is ordered and map is not
     (is (= (set test-data/resolved-path-and-refs)
-           (set (http/resolve-parameter-refs test-data/path-and-refs test-data/parameters nil))))))
+           (set (http/resolve-refs test-data/path-and-refs test-data/parameters nil)))))
+  (testing "Recursive definition refs are resolved correctly"
+    (is (= (test-data/resolved-definition-refs)
+           (http/resolve-refs test-data/definition-refs nil test-data/definitions)))))
 
 (deftest build-request-map-test
   (testing "Correct request map is built"

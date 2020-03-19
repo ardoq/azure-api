@@ -64,6 +64,40 @@
                  :required true,
                  :type "string"}})
 
+(def definition-refs
+  [
+   {:description "Something else",
+    :in "body",
+    :name "rudeboy",
+    :required true,
+    :type "object"
+    :schema {:reference/definitions "RudeBoy"}}
+   ]
+  )
+
+(def resolved-definition-refs
+  [
+   {:description "Something else",
+    :in "body",
+    :name "rudeBoy",
+    :required true,
+    :type "object"
+    :schema {:properties {:badMan {:type "string"}
+                          :address {:type "string"}}
+             :required ["badMan" "address"] ,
+             :type "object"}}
+   ]
+  )
+
+(def definitions
+  {:RudeBoy {:properties {:badMan {:references/definitions "BadMan"}
+                          :address {:type "string"}}
+             :required ["badMan" "address"] ,
+             :type "object"},
+   :BadMan {:type "string"}
+   }
+  )
+
 (def PeeringManagementClient 
   {:scheme "https",
    :host "management.azure.com",

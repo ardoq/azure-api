@@ -3,6 +3,7 @@
     [clj-http.client :as client]
     [ardoq.azure.utils :as utils]
     [clojure.string :as str]
+    [clojure.walk :as walk]
     ))
 
 
@@ -68,22 +69,21 @@
                       )))
               op-params)))
 
-
-
 (defn resolve-refs
-  "Returns op-param vec with parameter and definition refs recursively resolved into it"
-  [op-params parameters definitions]
-  (map (fn [op-param]
-         (if (= "reference" (-> op-param first key namespace))
-           (let [type (-> op-param first key name keyword) ;; XXX: Kind of verbose
-                 value (-> op-param first val keyword)]
-             (case type
-               :parameters (resolve-refs (get parameters value) parameters definitions)
-               :definitions (resolve-refs (get definitions value) parameters definitions)
-               (throw (AssertionError. (str "Invalid reference type: " type)))
-               ))
-           op-param))
-       op-params))
+  [something parameters definitions]
+  (walk/postwalk
+    (fn [op-param]
+      ;; Surely there's a better way to do this
+      (if-let [value (or (get op-param :reference/parameters) (get op-param :reference/definitions))]
+        (let [type (-> op-param first key name keyword) ;; Ref-maps only have one key
+              value (keyword value)]
+          (case type
+            :parameters (resolve-refs (get parameters value) parameters definitions)
+            :definitions (resolve-refs (get definitions value) parameters definitions)
+            (throw (AssertionError. (str "Invalid reference type: " type)))
+            ))
+        op-param))
+    something))
 
 (defn with-request-parameters
   ;; TODO: Header and form params?

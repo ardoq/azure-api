@@ -28,7 +28,7 @@
     (is (= (set test-data/resolved-path-and-refs)
            (set (http/resolve-refs test-data/path-and-refs test-data/parameters nil)))))
   (testing "Recursive definition refs are resolved correctly"
-    (is (= (test-data/resolved-definition-refs)
+    (is (= test-data/resolved-definition-refs
            (http/resolve-refs test-data/definition-refs nil test-data/definitions)))))
 
 (deftest build-request-map-test

@@ -68,7 +68,7 @@
   [
    {:description "Something else",
     :in "body",
-    :name "rudeboy",
+    :name "rudeBoy",
     :required true,
     :type "object"
     :schema {:reference/definitions "RudeBoy"}}
@@ -84,13 +84,12 @@
     :type "object"
     :schema {:properties {:badMan {:type "string"}
                           :address {:type "string"}}
-             :required ["badMan" "address"] ,
-             :type "object"}}
-   ]
-  )
+             :required ["badMan", "address"],
+             :type "object"}
+    }])
 
 (def definitions
-  {:RudeBoy {:properties {:badMan {:references/definitions "BadMan"}
+  {:RudeBoy {:properties {:badMan {:reference/definitions "BadMan"}
                           :address {:type "string"}}
              :required ["badMan" "address"] ,
              :type "object"},

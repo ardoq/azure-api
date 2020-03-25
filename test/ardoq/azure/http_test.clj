@@ -20,7 +20,12 @@
                                    :callous "yup"}
                            :path {:mean "why not"}}]
       (is (= structured-map
-             (http/structure-parameters test-data/path-and-query req-map))))))
+             (http/structure-parameters test-data/path-and-query req-map)))))
+  (testing "nested bodies are verified properly"
+    (let [req-map {:userInfo {:name "tester"
+                              :password "hunter2"}
+                   :id "10"}]
+      (is (= req-map (http/verify-body-object test-data/body-parameters req-map))))))
 
 (deftest resolve-refs-test
   (testing "Parameter refs are resolved into op-params"
@@ -32,7 +37,7 @@
            (http/resolve-refs test-data/definition-refs nil test-data/definitions)))))
 
 (deftest build-request-map-test
-  (testing "Correct request map is built"
+  (testing "Correct request map is built for GET"
     (let [op-map {:op :PeeringLocations_List
                   :request {:subscriptionId "10" :api-version "2019-08-01-preview"
                             :kind "Direct" :directPeeringType "Edge"}}]
@@ -41,6 +46,19 @@
               :query-params {:kind "Direct",
                              :directPeeringType "Edge",
                              :api-version "2019-08-01-preview"}}
+             (http/build-request-map (:client test-data/client) op-map)))))
+  (testing "Correct request map is built for POST"
+    (let [op-map {:op :PeeringServices_Update
+                  :request {:resourceGroupName "something"
+                            :peeringServiceName "what"
+                            :tags {:whatever "hey"}
+                            :subscriptionId "20"
+                            :api-version "2019-08-01-preview"}}]
+      (is (= {:method "post",
+              :url "https://management.azure.com/subscriptions/20/resourceGroups/something/providers/Microsoft.Peering/peeringServices/what",
+              :query-params {:api-version "2019-08-01-preview"}
+              :form-params {:tags {:whatever "hey"}}}
              (http/build-request-map (:client test-data/client) op-map))))))
+                           
 
 

@@ -23,6 +23,18 @@
     :type "string"}
    ])
 
+
+(def body-parameters
+  {:properties {:userInfo {:type "object"
+                           :properties {:name {:type "string"}
+                                        :password {:type "string"}}},
+                :id {:type "string"}},
+   :required ["userInfo" "id"],
+   :type "object"
+   }
+  )
+
+
 (def path-and-refs
   [
    {:description "Something else",
@@ -329,6 +341,7 @@
                             {:reference/parameters "SubscriptionIdParameter"}
                             {:reference/parameters "ApiVersionParameter"}]},
 :PeeringServices_Update {:path "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peeringServices/{peeringServiceName}",
+                         :verb "post"
                          :description "Updates tags for a peering service with the specified name under the given subscription and resource group.",
                          :parameters [{:description "The name of the resource group.",
                                        :in "path",
@@ -879,10 +892,9 @@
                                                    :type "integer"}},
                         :type "object"},
 :ResourceTags {:description "The resource tags.",
-               :properties {:tags {:additionalProperties {:type "string"},
-                                   :description "Gets or sets the tags, a dictionary of descriptors arm object",
-                                   :type "object"}},
-               :type "object"},
+               :tags {:properties {:whatever {:type "string"}},
+                      :description "Gets or sets the tags, a dictionary of descriptors arm object",
+                      :type "object"}},
 :DirectConnection {:description "The properties that define a direct connection.",
                    :properties {:bandwidthInMbps {:description "The bandwidth of the connection.",
                                                   :format "int32",

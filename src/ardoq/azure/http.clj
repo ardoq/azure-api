@@ -28,9 +28,9 @@
 
 
 ;; TODO: Exhaustive list of "special" keys (tags, allOf etc)
-(def reserved #{:tags :required :allOf})
+(def reserved #{:required :allOf})
 
-;; XXX: Does required only exist for top-level objects?
+;; TODO: Error handling
 (defn verify-body-object
   "properties contains kv-pairs
   the values can contain objects which in turn contain their own :properties, so this is recursive"
@@ -95,7 +95,7 @@
   (reduce-kv (fn [acc k v]
                (case k
                  :query (assoc acc :query-params v)
-                 :body acc
+                 :body (assoc acc :form-params v)
                  acc
                  ))
              base-req parameters))

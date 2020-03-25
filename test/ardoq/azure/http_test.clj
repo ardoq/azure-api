@@ -36,4 +36,11 @@
     (let [op-map {:op :PeeringLocations_List
                   :request {:subscriptionId "10" :api-version "2019-08-01-preview"
                             :kind "Direct" :directPeeringType "Edge"}}]
-    (is (= "ok" (http/build-request-map (:client test-data/client) op-map))))))
+      (is (= {:method "get" ,
+              :url "https://management.azure.com/subscriptions/10/providers/Microsoft.Peering/peeringLocations",
+              :query-params {:kind "Direct",
+                             :directPeeringType "Edge",
+                             :api-version "2019-08-01-preview"}}
+             (http/build-request-map (:client test-data/client) op-map))))))
+
+

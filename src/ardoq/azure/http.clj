@@ -27,31 +27,35 @@
 
 
 
-(def reserved #{:tags :required})
+;; TODO: Exhaustive list of "special" keys (tags, allOf etc)
+(def reserved #{:tags :required :allOf})
 
-(defn structure-properties
-  ":properties contains kv-pairs
-  the values can contain objects which in turn contain their own :properties
-  However, :properties is a valid keyname, so we're careful to only resolve
-  :properties for objects, not for :properties itself"
-  [properties]
-  
-  )
+;; XXX: Does required only exist for top-level objects?
+(defn verify-body-object
+  "properties contains kv-pairs
+  the values can contain objects which in turn contain their own :properties, so this is recursive"
+  [schema req-value]
+  (let [{:keys [properties required]} schema]
+    (reduce-kv
+      (fn [acc k v]
+        (cond
+          (k reserved) (println "This is reserved, so we don't want to process it as a json field")
+          (and (utils/col-contains? required (name k)) (not (k req-value)))
+            (println "Required object field" k "not given")
+          (k req-value) (if (= "object" (:type v))
+                          (assoc acc k (verify-body-object v (k req-value)))
+                          (assoc acc k (k req-value)))
+          :else acc))
+      {} properties)))
 
-;; XXX: We assume references are resolved at this point
-(defn structure-body
-  [param req-value]
-  (let [{:keys [properties required]} (:schema param)
-        properties (structure-properties properties)])
-  
-  )
 
 (defn structure-parameters
-  "Takes op param vec and op-map reqs, returns map like:
+  "Takes op :parameters vec and request-map parameters, returns map like:
   {:path {:id 10 :num 40}
   :query {:uh true}
   :body {:sure 20}}"
   [op-params request]
+  ;; FIXME: Disallow user-given parameters which are not in param list
   (apply utils/deep-merge
          (map (fn [param]
                 ;; TODO: Type-checking
@@ -62,28 +66,28 @@
                       (and required (not req-value))
                       ;; FIXME: Don't throw, return error-map
                       (throw (IllegalArgumentException. (str "Required parameter not given: " name)))
-                      req-value
-                      (if (= :body in)
-                        (structure-body param req-value)
-                        {in {name req-value}})
-                      )))
+                      req-value (if (and (= :body in) (= "object" (get-in param [:schema :type])))
+                                  {in {name (verify-body-object (:schema param) req-value)}}
+                                  {in {name req-value}}))
+                      ))
               op-params)))
 
+;; FIXME: Naming
 (defn resolve-refs
-  [something parameters definitions]
+  [traversable parameters definitions]
   (walk/postwalk
-    (fn [op-param]
+    (fn [map-elem]
       ;; Surely there's a better way to do this
-      (if-let [value (or (get op-param :reference/parameters) (get op-param :reference/definitions))]
-        (let [type (-> op-param first key name keyword) ;; Ref-maps only have one key
+      (if-let [value (or (get map-elem :reference/parameters) (get map-elem :reference/definitions))]
+        (let [type (-> map-elem first key name keyword) ;; Ref-maps only have one key
               value (keyword value)]
           (case type
             :parameters (resolve-refs (get parameters value) parameters definitions)
             :definitions (resolve-refs (get definitions value) parameters definitions)
             (throw (AssertionError. (str "Invalid reference type: " type)))
             ))
-        op-param))
-    something))
+        map-elem))
+    traversable))
 
 (defn with-request-parameters
   ;; TODO: Header and form params?

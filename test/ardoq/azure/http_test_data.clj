@@ -104,6 +104,7 @@
           :title "PeeringManagementClient",
           :version "2019-08-01-preview"},
    :ops {:PeeringLocations_List {:path "/subscriptions/{subscriptionId}/providers/Microsoft.Peering/peeringLocations",
+                                 :verb "get"
                                  :description "Lists all of the available peering locations for the specified kind of peering.",
                                  :parameters [{:description "The kind of the peering.",
                                                :enum ["Direct"

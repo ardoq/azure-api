@@ -17,3 +17,5 @@
                         (last args)))
          maps))
   
+
+(defn col-contains? [col elem] (some #(= elem %) col))

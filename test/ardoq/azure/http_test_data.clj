@@ -954,4 +954,4 @@
 
 
 
-(def client (api/client PeeringManagementClient))
+(def client (api/client PeeringManagementClient "token"))

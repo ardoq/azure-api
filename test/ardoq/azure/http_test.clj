@@ -42,11 +42,12 @@
                   :request {:subscriptionId "10" :api-version "2019-08-01-preview"
                             :kind "Direct" :directPeeringType "Edge"}}]
       (is (= {:method "get" ,
+              :headers {"Authorization" "Bearer token"}
               :url "https://management.azure.com/subscriptions/10/providers/Microsoft.Peering/peeringLocations",
               :query-params {:kind "Direct",
                              :directPeeringType "Edge",
                              :api-version "2019-08-01-preview"}}
-             (http/build-request-map (:client test-data/client) op-map)))))
+             (http/build-request-map test-data/client op-map)))))
   (testing "Correct request map is built for POST"
     (let [op-map {:op :PeeringServices_Update
                   :request {:resourceGroupName "something"
@@ -55,10 +56,11 @@
                             :subscriptionId "20"
                             :api-version "2019-08-01-preview"}}]
       (is (= {:method "post",
+              :headers {"Authorization" "Bearer token"}
               :url "https://management.azure.com/subscriptions/20/resourceGroups/something/providers/Microsoft.Peering/peeringServices/what",
               :query-params {:api-version "2019-08-01-preview"}
               :form-params {:tags {:whatever "hey"}}}
-             (http/build-request-map (:client test-data/client) op-map))))))
+             (http/build-request-map test-data/client op-map))))))
                            
 
 

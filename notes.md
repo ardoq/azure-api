@@ -235,3 +235,9 @@ The reason we're doing all this stuff is to figure out what parameters are what 
 The easiest thing to do would be to only check the top-level object/primitive, then naively return anything inside.
 
 It would be a lot better if we checked the body members as well. In order to do this, we have to traverse both the request map and the body param at the same time.
+
+# Some time later...
+After letting this gestate for a bit I realized I was overcomplicating it. For now I'm just gonna do verification of the body (all body fields specified in swagger are recursively validated against the request map parameters).
+I still need to disallow incorrect user parameters. I also need to add individual handling of all the swagger meta-keys (allOf, additionalProperties etc). That's probably going to be a big task.
+
+Before all that however, I have to figure out what I want to do next. The request maps are (mostly) being constructed correctly now, so documentation and authentication are the two big things left.

@@ -27,8 +27,8 @@
 
 
 
-;; TODO: Exhaustive list of "special" keys (tags, allOf etc)
-(def reserved #{:required :allOf})
+;; TODO: Exhaustive list of "special" keys with individual handling
+(def reserved #{:required :allOf :additionalProperties})
 
 ;; TODO: Error handling
 (defn verify-body-object
@@ -100,9 +100,14 @@
                  ))
              base-req parameters))
 
+(defn with-auth
+  [req auth-token]
+  (assoc req :headers {"Authorization" (str "Bearer " auth-token)}))
+
 (defn build-request-map
   [client op-map]
-  (let [op (get-in client [:ops (:op op-map)]) ;; FIXME: If-let
+  (let [{:keys [auth client]} client
+        op (get-in client [:ops (:op op-map)]) ;; FIXME: If-let
         {:keys [path parameters verb]} op
         parameters (resolve-refs parameters (:parameters client) (:definitions client))
         parameters (structure-parameters parameters (:request op-map))
@@ -113,9 +118,10 @@
                     path)
         base-req {:method verb
                   :url    url}]
-    (with-request-parameters base-req parameters)))
-
-
+    (-> base-req
+        (with-request-parameters parameters)
+        (with-auth auth))))
 
 (defn send-request
-  [request])
+  [request]
+  (client/request request))

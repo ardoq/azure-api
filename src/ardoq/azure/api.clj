@@ -5,12 +5,11 @@
 
 (defn invoke
   [client op-map]
-  (let [request (http/build-request-map (:client client) op-map)]
+  (let [request (http/build-request-map client op-map)]
     (http/send-request request)))
 
 (defn client
- [client]
- {:client client})
+ [client bearer-token]
+ {:client client :auth bearer-token})
 
-(defn -main []
-  (client PeeringManagementClient))
+(defn -main [])

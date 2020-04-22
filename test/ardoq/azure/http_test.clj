@@ -61,6 +61,19 @@
               :query-params {:api-version "2019-08-01-preview"}
               :form-params {:tags {:whatever "hey"}}}
              (http/build-request-map test-data/client op-map))))))
-                           
 
+;; TODO: Write tests that call structure-parameters and verify-body-object
+(deftest check-for-wrong-params
+  (testing "Incorrect user-specified parameters are caught"
+    (let [incorrect-request {:neym "Tim"
+                             :possword "hunter2"}
+          correct-request {:name "Tim"
+                           :password "hunter2"}
+          parameters [:name :password]]
+      ;; FIXME: Should catch both incorrect parameters
+      (is (= {::anom/category ::anom/incorrect
+              ::anom/message  "Incorrect parameter given: possword"}
+             (http/check-for-wrong-params parameters incorrect-request)))
+      (is (= nil (http/check-for-wrong-params parameters correct-request)))
+      )))
 

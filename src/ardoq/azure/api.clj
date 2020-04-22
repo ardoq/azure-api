@@ -1,16 +1,18 @@
 (ns ardoq.azure.api
   (:require
     [ardoq.azure.http :as http]
+    [ardoq.azure.auth :as auth]
     [ardoq.azure.docs :as doc]
-    [ardoq.azure.apis :refer [PeeringManagementClient]]))
+    [clojure.pprint :refer [pprint]]
+    [ardoq.azure.apis :refer [PeeringManagementClient SqlManagementClient ResourceManagementClient]]))
 
 (defn ops
   [client]
-  (doc/ops client))
+  (pprint (doc/ops client)))
 
 (defn doc
   [client op]
-  (doc/get-op-info (:client client) op))
+  (pprint (doc/get-op-info (:client client) op)))
 
 (defn invoke
   [client op-map]
@@ -18,7 +20,11 @@
     (http/send-request request)))
 
 (defn client
-  [client bearer-token]
-  {:client client :auth bearer-token})
+  [client sub-id auth-token]
+  {:client client :sub-id sub-id :token auth-token})
 
-(defn -main [])
+(defn auth
+  [tenant-id client-id client-secret]
+  (auth/make-token tenant-id client-id client-secret))
+
+

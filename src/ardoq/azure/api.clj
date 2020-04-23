@@ -21,7 +21,7 @@
 
 (defn client
   [client sub-id auth-token]
-  {:client client :sub-id sub-id :token auth-token})
+  {:client client :sub-id sub-id :auth auth-token})
 
 (defn auth
   [tenant-id client-id client-secret]

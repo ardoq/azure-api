@@ -4,6 +4,8 @@
     [clojure.data.json :as json])
   (:import (clojure.lang IFn)))
 
+(def RENEW-TIME 15)
+
 (defrecord Auth [fetch-token token-atom auth-info]
   IFn
   (invoke [_]
@@ -24,12 +26,12 @@
      :timestamp timestamp}))
 
 (defn fetch-token
-  "Checks token timestamp, updates and returns new token if remaining time < 15 minutes"
+  "Checks token timestamp, updates and returns new token if remaining time < RENEW-TIME minutes"
   [token-atom auth-info]
   (let [cur-time (quot (System/currentTimeMillis) 1000)
         {:keys [tenant-id client-id client-secret]} auth-info]
     (if (< (- (:timestamp @token-atom) cur-time)
-           (* 60 15))
+           (* 60 RENEW-TIME))
       (swap! token-atom merge (get-auth-token tenant-id client-id client-secret)))
     (:token @token-atom)))
 

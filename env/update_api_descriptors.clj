@@ -8,7 +8,7 @@
     [ardoq.azure.utils :as utils]
     ))
 
-(def dir "azure_api_swagger")
+(def dir "resources")
 (def force-download-all false)
 
 

@@ -1,9 +1,16 @@
-{:paths   ["src" "test" "env"]
+{:paths   ["src" "test" "env" "resources"]
  :deps    {org.clojure/data.json                           {:mvn/version "0.2.7"}
            clj-http                                        {:mvn/version "3.10.0"}
            com.cognitect/anomalies                         {:mvn/version "0.1.12"}
            }
+
  :aliases {
+           :install {:extra-deps {deps-deploy {:mvn/version "RELEASE"}}
+                      :main-opts ["-m" "deps-deploy.deps-deploy" "install"
+                                  "azure_api.jar"]}
+           :deploy {:extra-deps {deps-deploy {:mvn/version "RELEASE"}}
+                    :main-opts ["-m" "deps-deploy.deps-deploy" "deploy"
+                                "azure_api.jar"]}
            :nrepl {:extra-deps
                    {nrepl/nrepl {:mvn/version "0.6.0"}}}
            :test        {:extra-paths ["test"]}

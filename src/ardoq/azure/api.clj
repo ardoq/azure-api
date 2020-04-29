@@ -3,6 +3,7 @@
     [ardoq.azure.http :as http]
     [ardoq.azure.auth :as auth]
     [ardoq.azure.docs :as doc]
+    [ardoq.azure.client :as client]
     [clojure.pprint :refer [pprint]]
     [ardoq.azure.apis :refer [PeeringManagementClient SqlManagementClient ResourceManagementClient]]))
 
@@ -20,8 +21,10 @@
     (http/send-request request)))
 
 (defn client
-  [client sub-id auth-token]
-  {:client client :sub-id sub-id :auth auth-token})
+  ([client-kw sub-id auth-token]
+    {:client (client/get-latest-api client-kw) :sub-id sub-id :auth auth-token})
+   ([client-kw api-version sub-id auth-token]
+    {:client (client/load-client client-kw api-version) :sub-id sub-id :auth auth-token}))
 
 (defn auth
   [tenant-id client-id client-secret]

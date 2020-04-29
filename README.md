@@ -7,10 +7,22 @@ The functionality mimicks that of [aws-api](https://github.com/cognitect-labs/aw
 ## Creating a client
 
 In order to create a client, you need three things:
-* Proper client imported (TODO: Currently they're just defined locally in `apis.clj`)
+* Client keyword name and api-version
 * Azure Subscription id
 * Authentication Token (See [Authenticating](#authenticating))
 
+Clients are located in the `resources` folder. The keyword for a client is simply the name of the folder as a keyword.
+
+If a specific api version is to be used, the api-version can also be specified as a string. Otherwise, the latest api version is used.
+
+In other words, use one of these:
+``` clojure
+;; Use latest api-version
+(def res-client (client :resources sub-id token))
+
+;; Use specified api-version
+(def res-client (client :resources "2016-07-01" sub-id token))
+``` 
 
 ## Invoking a client
 
@@ -50,7 +62,7 @@ Create a self-refreshing auth-token with `(auth tenant-id client-id client-secre
                  "a0cefbf2-dcd3-4632-aee6-251fda2034cd"
                  "32b804e7-a6a1-4dd7-882f-afe3f36d9c19"))
 
-(def res-client (client ResourceManagementClient "51ff24d7-63d5-4819-8658-9510de9ac061" token))
+(def res-client (client :resources "51ff24d7-63d5-4819-8658-9510de9ac061" token))
 
 (invoke res-client {:op :Resources_Get
                     :request {:resourceGroupName "Test group name"

@@ -2,15 +2,21 @@
  :deps    {org.clojure/data.json                           {:mvn/version "0.2.7"}
            clj-http                                        {:mvn/version "3.10.0"}
            com.cognitect/anomalies                         {:mvn/version "0.1.12"}
+           clj-time                                        {:mvn/version "0.15.2"}
            }
 
  :aliases {
+           :jar {:extra-deps {pack/pack.alpha
+                              {:git/url "https://github.com/juxt/pack.alpha.git"
+                               :sha "2d75eac719e3a0e2112958cbc23d8cbfce4690bf"}}
+                 :main-opts ["-m" "mach.pack.alpha.skinny" "--no-libs"
+                             "--project-path" "azure-api.jar"]}
            :install {:extra-deps {deps-deploy {:mvn/version "RELEASE"}}
                       :main-opts ["-m" "deps-deploy.deps-deploy" "install"
-                                  "azure_api.jar"]}
+                                  "azure-api.jar"]}
            :deploy {:extra-deps {deps-deploy {:mvn/version "RELEASE"}}
                     :main-opts ["-m" "deps-deploy.deps-deploy" "deploy"
-                                "azure_api.jar"]}
+                                "azure-api.jar"]}
            :nrepl {:extra-deps
                    {nrepl/nrepl {:mvn/version "0.6.0"}}}
            :test        {:extra-paths ["test"]}

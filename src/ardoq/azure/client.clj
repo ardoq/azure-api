@@ -22,13 +22,11 @@
   [client-kw]
   (let [folder (-> (name client-kw) io/resource io/file)
         versions (->> folder .listFiles seq (map #(.getName %)))]
-    (loop [idx 0
-           latest 0]
-      (if (= idx (count versions))
-        (load-client client-kw (nth versions latest))
-        (if (t/before?
-              (string->date-time (nth versions latest))
-              (string->date-time (nth versions idx)))
-          (recur (inc idx) idx)
-          (recur (inc idx) latest)
-          )))))
+    (load-client client-kw
+                 (reduce
+                   (fn [a b]
+                     (if (t/after?
+                           (string->date-time a)
+                           (string->date-time b))
+                       a
+                       b)) versions))))

@@ -1,4 +1,6 @@
 
+[![Clojars Project](https://img.shields.io/clojars/v/com.ardoq/azure-api.svg)](https://clojars.org/com.ardoq/azure-api)
+
 # Usage
 
 Azure-api allows for simple usage of the Azure REST APIs in Clojure.

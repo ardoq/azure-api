@@ -12,7 +12,7 @@
 (defn apis
   []
   (let [url (io/resource "api-list.edn")]
-    (-> url io/reader PushbackReader. edn/read pprint)))
+    (-> url io/reader PushbackReader. edn/read)))
 
 (defn ops
   [client]

@@ -30,8 +30,10 @@
     (http/send-request request)))
 
 (defn client
-   [client-kw api-version sub-id auth-token]
-    {:client (client/load-client client-kw api-version) :sub-id sub-id :auth auth-token})
+  ([client-kw sub-id auth-token]
+   {:client (client/load-client client-kw) :sub-id sub-id :auth auth-token})
+  ([client-kw api-version sub-id auth-token]
+   {:client (client/load-client client-kw api-version) :sub-id sub-id :auth auth-token}))
 
 (defn auth
   [tenant-id client-id client-secret]

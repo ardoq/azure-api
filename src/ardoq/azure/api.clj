@@ -9,9 +9,11 @@
     [clojure.edn :as edn])
   (:import [java.io PushbackReader]))
 
+(def ^:const api-list-filename "api-list.edn")
+
 (defn apis
   []
-  (let [url (io/resource "api-list.edn")]
+  (let [url (io/resource api-list-filename)]
     (-> url io/reader PushbackReader. edn/read)))
 
 (defn ops

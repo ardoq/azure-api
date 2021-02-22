@@ -4,7 +4,15 @@
     [ardoq.azure.auth :as auth]
     [ardoq.azure.docs :as doc]
     [ardoq.azure.client :as client]
-    [clojure.pprint :refer [pprint]]))
+    [clojure.pprint :refer [pprint]]
+    [clojure.java.io :as io]
+    [clojure.edn :as edn])
+  (:import [java.io PushbackReader]))
+
+(defn apis
+  []
+  (let [url (io/resource "api-list.edn")]
+    (-> url io/reader PushbackReader. edn/read pprint)))
 
 (defn ops
   [client]

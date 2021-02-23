@@ -4,6 +4,7 @@ if ! git diff --quiet; then
     exit 1
 fi
 
+lein test
 lein clean
 lein jar
 

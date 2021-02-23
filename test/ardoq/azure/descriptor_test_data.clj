@@ -134,7 +134,7 @@
                                  :type "string"
                                  }
                                 ]
-                   }
+                   :verb :get}
     :PostSomething {:description "Another description" 
                     :path "some/path/like/this"
                     :parameters [
@@ -145,7 +145,7 @@
                                   :type "string"
                                   }
                                  ]
-                    }
+                    :verb :post}
 
     :GetSomethingElse { :description "A description"
                        :path "another/identical/path"
@@ -157,7 +157,7 @@
                                      :type "string"
                                      }
                                     ]
-                       }
+                       :verb :get}
     :PostSomethingElse {:description "Another description"
                         :path "another/identical/path"
                         :parameters [
@@ -168,7 +168,7 @@
                                       :type "string"
                                       }
                                      ]
-                        }
+                        :verb :post}
     })
 
 

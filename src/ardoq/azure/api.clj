@@ -20,7 +20,7 @@
   [client]
   (pprint (doc/ops client)))
 
-(defn doc
+(defn docs
   [client op]
   (pprint (doc/get-op-info (:client client) op)))
 

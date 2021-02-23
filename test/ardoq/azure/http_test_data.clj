@@ -1,7 +1,4 @@
-(ns ardoq.azure.http-test-data
-  (:require
-    [ardoq.azure.api :as api]
-    ))
+(ns ardoq.azure.http-test-data)
 
 (def path-and-query
   [{:description "Something",
@@ -954,4 +951,8 @@
 
 
 
-(def client (api/client PeeringManagementClient "token"))
+(defn client
+  ([]
+   {:client PeeringManagementClient :auth (fn [] "token")})
+  ([sub-id]
+   {:client PeeringManagementClient :sub-id sub-id :auth (fn [] "token")}))

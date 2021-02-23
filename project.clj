@@ -13,4 +13,5 @@
                    :dependencies [[clj-kondo "2020.10.10"]]}}
   :aliases {"lint" ["run" "-m" "clj-kondo.main" "--lint" "src" "--lint" "dev" "--lint" "test"]
             "l" "lint"
-            "t" ["do" ["clean"] ["test"]]})
+            "t" ["do" ["clean"] ["test"]]}
+  :main ^:skip-aot update-api-descriptors)

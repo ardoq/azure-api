@@ -45,6 +45,7 @@ Available operations for a client can be found with `(ops client)`.
 
 Information about an operation, including parameters, can be found with `(docs client :op-keyword)`.
 
+Execute `lein run` to download fresh api specs from [Azure](https://api.apis.guru/v2/list.json).
 
 # Authenticating
 

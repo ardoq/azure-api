@@ -1,4 +1,4 @@
-(defproject com.ardoq/azure-api "0.1.1"
+(defproject com.ardoq/azure-api "0.1.0"
   :description "Allows for simple usage of the Azure REST APIs in Clojure."
   :url "https://github.com/ardoq/azure-api"
   :license {:name "The MIT License"

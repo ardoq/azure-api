@@ -75,6 +75,4 @@
       (is (= {::anom/category ::anom/incorrect
               ::anom/message  "Incorrect parameter given: possword"}
              (http/check-for-wrong-params parameters incorrect-request)))
-      (is (= nil (http/check-for-wrong-params parameters correct-request)))
-      )))
-
+      (is (= nil (http/check-for-wrong-params parameters correct-request))))))

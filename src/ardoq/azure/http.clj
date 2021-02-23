@@ -4,8 +4,7 @@
     [ardoq.azure.utils :as utils]
     [clojure.string :as str]
     [clojure.walk :as walk]
-    [cognitect.anomalies :as anom]
-    ))
+    [cognitect.anomalies :as anom]))
 
 (def curly-brackets-regex #"\{(.*?)\}")
 

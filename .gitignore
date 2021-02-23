@@ -1,1 +1,6 @@
 azure_api_swagger/
+.idea
+*.iml
+.nrepl-port
+.cpcache
+dev.env

@@ -6,7 +6,7 @@
     [clj-http.client :as client]
     [ardoq.azure.descriptor :as desc]
     [ardoq.azure.utils :as utils]
-    ))
+    [ardoq.azure.api :as api]))
 
 (def dir "resources")
 (def force-download-all false)
@@ -43,6 +43,17 @@
     (println "Retrieving swaggerfiles for" name)
     (mapv #(dl-file! name %1 %2) version-names swagger-urls)))
 
+(defn write-api-list!
+  [apis]
+  (let [path (str/join "/" [dir api/api-list-filename])]
+    (->> apis
+         (map first)
+         (map (comp keyword last #(str/split % #":")))
+         (set)
+         (spit path))))
+
 (defn -main
   [& args]
-  (mapv write-swaggerfiles! (fetch-azure-apis)))
+  (let [apis (fetch-azure-apis)]
+    (doall (map write-swaggerfiles! apis))
+    (write-api-list! apis)))

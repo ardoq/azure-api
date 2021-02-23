@@ -4,7 +4,17 @@
     [ardoq.azure.auth :as auth]
     [ardoq.azure.docs :as doc]
     [ardoq.azure.client :as client]
-    [clojure.pprint :refer [pprint]]))
+    [clojure.pprint :refer [pprint]]
+    [clojure.java.io :as io]
+    [clojure.edn :as edn])
+  (:import [java.io PushbackReader]))
+
+(def ^:const api-list-filename "api-list.edn")
+
+(defn apis
+  []
+  (let [url (io/resource api-list-filename)]
+    (-> url io/reader PushbackReader. edn/read)))
 
 (defn ops
   [client]
@@ -20,8 +30,10 @@
     (http/send-request request)))
 
 (defn client
-   [client-kw api-version sub-id auth-token]
-    {:client (client/load-client client-kw api-version) :sub-id sub-id :auth auth-token})
+  ([client-kw sub-id auth-token]
+   {:client (client/load-client client-kw) :sub-id sub-id :auth auth-token})
+  ([client-kw api-version sub-id auth-token]
+   {:client (client/load-client client-kw api-version) :sub-id sub-id :auth auth-token}))
 
 (defn auth
   [tenant-id client-id client-secret]

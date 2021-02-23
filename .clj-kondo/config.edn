@@ -1,0 +1,5 @@
+{:linters {:unused-binding {:exclude-destructured-as true}
+           :unused-private-var {:level :warning}
+           :unresolved-symbol {:level :error}
+           :refer-all {:level :warning
+                       :exclude #{clojure.test}}}}

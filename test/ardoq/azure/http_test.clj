@@ -1,6 +1,6 @@
 (ns ardoq.azure.http-test
   (:require
-    [clojure.test :refer :all]
+    [clojure.test :refer [deftest testing is]]
     [ardoq.azure.http :as http]
     [ardoq.azure.http-test-data :as test-data]
     [cognitect.anomalies :as anom]))

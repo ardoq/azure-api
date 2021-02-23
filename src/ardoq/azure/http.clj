@@ -29,7 +29,7 @@
   [correct-param-names request]
   (apply utils/deep-merge
          (map (fn [param]
-                (if (not (utils/col-contains? correct-param-names param))
+                (when-not (utils/col-contains? correct-param-names param)
                   {::anom/category ::anom/incorrect
                    ::anom/message  (str "Incorrect parameter given: " (name param))}))
               (keys request))))

@@ -1,6 +1,6 @@
 (ns ardoq.azure.doc-test
   (:require
-    [clojure.test :refer :all]
+    [clojure.test :refer [deftest testing is]]
     [ardoq.azure.http-test-data :as test-data]
     [ardoq.azure.docs :as docs]))
 

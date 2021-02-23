@@ -30,7 +30,7 @@
   [token-atom auth-info]
   (let [cur-time (quot (System/currentTimeMillis) 1000)
         {:keys [tenant-id client-id client-secret]} auth-info]
-    (if (< (- (:timestamp @token-atom) cur-time)
+    (when (< (- (:timestamp @token-atom) cur-time)
            (* 60 RENEW-TIME))
       (swap! token-atom merge (get-auth-token tenant-id client-id client-secret)))
     (:token @token-atom)))

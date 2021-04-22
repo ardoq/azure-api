@@ -11,6 +11,7 @@
   :repl-options {:init-ns ardoq.azure.api}
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies [[clj-kondo "2020.10.10"]]}}
+  :plugins [[com.ebaxt.lein-ver "1.2.0"]]
   :aliases {"lint" ["run" "-m" "clj-kondo.main" "--lint" "src" "--lint" "dev" "--lint" "test"]
             "l" "lint"
             "t" ["do" ["clean"] ["test"]]}

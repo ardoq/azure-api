@@ -1,9 +1,8 @@
 (ns ardoq.azure.descriptor-test
   (:require
-    [clojure.test :refer :all]
+    [clojure.test :refer [deftest testing is]]
     [ardoq.azure.descriptor :as desc]
-    [ardoq.azure.descriptor-test-data :as test-data]
-    ))
+    [ardoq.azure.descriptor-test-data :as test-data]))
 
 (comment "Outdated"
          (deftest resolve-ref

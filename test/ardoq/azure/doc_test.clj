@@ -1,8 +1,8 @@
 (ns ardoq.azure.doc-test
   (:require
-    [clojure.test :refer :all]
+    [clojure.test :refer [deftest testing is]]
     [ardoq.azure.http-test-data :as test-data]
-    [ardoq.azure.api :as api]))
+    [ardoq.azure.docs :as docs]))
 
 (deftest get-ops-test
   (testing "Retrieving the ops works fine"
@@ -32,7 +32,7 @@
               :PeeringServiceProviders_List
               :Operations_List
               :Peerings_CreateOrUpdate)
-           (api/ops test-data/client)))))
+           (docs/ops (test-data/client))))))
 
 (deftest get-op-info-test
   (testing "Retrieving info about an op works fine"
@@ -62,4 +62,4 @@
                           :name "api-version",
                           :required true,
                           :type "string"}]}
-           (api/doc test-data/client :PeeringLocations_List)))))
+           (docs/get-op-info (:client (test-data/client)) :PeeringLocations_List)))))

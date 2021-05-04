@@ -43,8 +43,9 @@ NB: `subscriptionId` and `api-version` are retrieved automatically from the clie
 
 Available operations for a client can be found with `(ops client)`.
 
-Information about an operation, including parameters, can be found with `(doc client :op-keyword)`.
+Information about an operation, including parameters, can be found with `(docs client :op-keyword)`.
 
+Execute `lein run` to download fresh api specs from [Azure](https://api.apis.guru/v2/list.json).
 
 # Authenticating
 

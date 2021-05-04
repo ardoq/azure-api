@@ -53,7 +53,7 @@
          (spit path))))
 
 (defn -main
-  [& args]
+  [& _]
   (let [apis (fetch-azure-apis)]
     (doall (map write-swaggerfiles! apis))
     (write-api-list! apis)))

@@ -1,8 +1,7 @@
 (ns ardoq.azure.descriptor
   (:require
     [clojure.string :as str]
-    [clojure.walk :as walk]
-    ))
+    [clojure.walk :as walk]))
 
 ;; Converting swagger to descriptor
 
@@ -15,8 +14,7 @@
       {(keyword "reference" type) location}
       ;; FIXME: Reference can use dir traversal (e.g. ../somefile.json/definitions)
       ;; Seems to mainly be network APIs like network-loadBalancer
-      (println "Invalid reference type for swagger ref:" type))
-    ))
+      (println "Invalid reference type for swagger ref:" type))))
 
 (defn resolve-all-refs
   [swagger]
@@ -63,5 +61,4 @@
      :ops (paths->ops paths)
      :parameters parameters
      :definitions definitions
-     })
-)
+     }))

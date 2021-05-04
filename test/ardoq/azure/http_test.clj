@@ -1,9 +1,9 @@
 (ns ardoq.azure.http-test
   (:require
-    [clojure.test :refer :all]
+    [clojure.test :refer [deftest testing is]]
     [ardoq.azure.http :as http]
     [ardoq.azure.http-test-data :as test-data]
-    ))
+    [cognitect.anomalies :as anom]))
 
 (deftest resolve-path-parameters-test
   (testing "path-parameters successfully resolves into path"
@@ -20,7 +20,7 @@
                                    :callous "yup"}
                            :path {:mean "why not"}}]
       (is (= structured-map
-             (http/structure-parameters test-data/path-and-query req-map)))))
+             (http/structure-parameters test-data/path-and-query "1970-01-01" "sub-1" req-map)))))
   (testing "nested bodies are verified properly"
     (let [req-map {:userInfo {:name "tester"
                               :password "hunter2"}
@@ -47,7 +47,8 @@
               :query-params {:kind "Direct",
                              :directPeeringType "Edge",
                              :api-version "2019-08-01-preview"}}
-             (http/build-request-map test-data/client op-map)))))
+             (http/build-request-map (test-data/client "10") op-map)))))
+
   (testing "Correct request map is built for POST"
     (let [op-map {:op :PeeringServices_Update
                   :request {:resourceGroupName "something"
@@ -60,7 +61,7 @@
               :url "https://management.azure.com/subscriptions/20/resourceGroups/something/providers/Microsoft.Peering/peeringServices/what",
               :query-params {:api-version "2019-08-01-preview"}
               :form-params {:tags {:whatever "hey"}}}
-             (http/build-request-map test-data/client op-map))))))
+             (http/build-request-map (test-data/client "20") op-map))))))
 
 ;; TODO: Write tests that call structure-parameters and verify-body-object
 (deftest check-for-wrong-params
@@ -74,6 +75,4 @@
       (is (= {::anom/category ::anom/incorrect
               ::anom/message  "Incorrect parameter given: possword"}
              (http/check-for-wrong-params parameters incorrect-request)))
-      (is (= nil (http/check-for-wrong-params parameters correct-request)))
-      )))
-
+      (is (= nil (http/check-for-wrong-params parameters correct-request))))))
